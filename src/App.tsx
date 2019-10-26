@@ -1,11 +1,12 @@
-import "./app.css";
+import "./css/app.css";
 
+import Editor from "./editor/Editor";
 import React from "react";
 
 const App = () => {
   return (
     <div className="app">
-      <div>Hello world</div>
+      <Editor />
     </div>
   );
 };
