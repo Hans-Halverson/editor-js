@@ -73,7 +73,11 @@ const EditorSelectionOverlay = (props: {}) => {
           if (prevRange[1] < range[1]) {
             borders.push("top-right");
           } else if (prevRange[1] > range[1]) {
-            nextBorders.push("top");
+            if (prevRange[0] < range[1]) {
+              nextBorders.push("top");
+            } else {
+              borders.push("top-right");
+            }
           }
         }
 
@@ -83,7 +87,11 @@ const EditorSelectionOverlay = (props: {}) => {
           if (nextRange[0] > range[0]) {
             borders.push("bottom-left");
           } else if (nextRange[0] < range[0]) {
-            prevBorders.push("bottom");
+            if (nextRange[1] > range[1]) {
+              prevBorders.push("bottom");
+            } else {
+              borders.push("bottom-left");
+            }
           }
 
           if (nextRange[1] < range[1]) {

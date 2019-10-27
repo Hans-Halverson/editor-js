@@ -25,7 +25,7 @@ const EditorInput = (props: {}) => {
       return;
     }
 
-    const { line, offset } = selection.anchor;
+    const { line, offset } = selection.focus;
 
     switch (event.key) {
       case "ArrowDown":

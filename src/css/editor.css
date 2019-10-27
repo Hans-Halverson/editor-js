@@ -3,6 +3,7 @@
   --selection-overlay-radius: 3px;
 
   --editor-background-color: #ffffff;
+  --selection-overlay-color: rgba(0, 0, 0, 0.15);
 }
 
 .editor-root {
@@ -102,7 +103,7 @@
 }
 
 .editor-selection-overlay {
-  background-color: rgba(0, 0, 0, 0.15);
+  background-color: var(--selection-overlay-color);
   height: var(--line-height);
   position: absolute;
 }
@@ -123,9 +124,16 @@
   border-bottom-left-radius: var(--selection-overlay-radius);
 }
 
+.editor-selection-overlay-prev-border,
+.editor-selection-overlay-next-border {
+  background-color: transparent;
+  overflow: hidden;
+}
+
 .editor-selection-overlay-prev-border > div,
 .editor-selection-overlay-next-border > div {
-  background-color: var(--editor-background-color);
+  box-shadow: 0 0 0 5px var(--selection-overlay-color);
+  background-color: transparent;
   height: 100%;
   width: 100%;
 }
