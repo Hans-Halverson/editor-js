@@ -18,7 +18,7 @@ const EditorSelectionOverlay = (props: {}) => {
   const secondLocation = selection.getSecond();
   const charWidth = TextWidth.getCharWidth();
 
-  const selectedRanges = [];
+  const selectedRanges: ([number, number] | null)[] = [];
 
   for (let i = 0; i < lines.length; i++) {
     if (i < firstLocation.line || i > secondLocation.line) {
@@ -54,16 +54,93 @@ const EditorSelectionOverlay = (props: {}) => {
           return null;
         }
 
+        const prevRange = i > 0 ? selectedRanges[i - 1] : null;
+        const nextRange = i < lines.length - 1 ? selectedRanges[i + 1] : null;
+
+        const borders = [];
+        const nextBorders: ("top" | "bottom")[] = [];
+        const prevBorders: ("top" | "bottom")[] = [];
+
+        if (prevRange == null) {
+          borders.push("top-right", "top-left");
+        } else {
+          if (prevRange[0] > range[0]) {
+            borders.push("top-left");
+          } else if (prevRange[0] < range[0]) {
+            prevBorders.push("top");
+          }
+
+          if (prevRange[1] < range[1]) {
+            borders.push("top-right");
+          } else if (prevRange[1] > range[1]) {
+            nextBorders.push("top");
+          }
+        }
+
+        if (nextRange == null) {
+          borders.push("bottom-right", "bottom-left");
+        } else {
+          if (nextRange[0] > range[0]) {
+            borders.push("bottom-left");
+          } else if (nextRange[0] < range[0]) {
+            prevBorders.push("bottom");
+          }
+
+          if (nextRange[1] < range[1]) {
+            borders.push("bottom-right");
+          } else if (nextRange[1] > range[1]) {
+            nextBorders.push("bottom");
+          }
+        }
+
+        console.log(i, nextBorders);
+
+        const top = `${i * LINE_HEIGHT}px`;
+
         return (
-          <div
-            key={i}
-            className="editor-selection-overlay"
-            style={{
-              top: `${i * LINE_HEIGHT}px`,
-              left: `${range[0] * charWidth}px`,
-              width: `${(range[1] - range[0]) * charWidth}px`
-            }}
-          />
+          <div>
+            {prevBorders.length > 0 && (
+              <div
+                key={`${i}-prev`}
+                className={
+                  "editor-selection-overlay editor-selection-overlay-prev-border " +
+                  prevBorders.join(" ")
+                }
+                style={{
+                  top,
+                  left: `${(range[0] - 1) * charWidth}px`,
+                  width: `${charWidth}px`
+                }}
+              >
+                <div />
+              </div>
+            )}
+            <div
+              key={i}
+              className={"editor-selection-overlay " + borders.join(" ")}
+              style={{
+                top,
+                left: `${range[0] * charWidth}px`,
+                width: `${(range[1] - range[0]) * charWidth}px`
+              }}
+            />
+            {nextBorders.length > 0 && (
+              <div
+                key={`${i}-next`}
+                className={
+                  "editor-selection-overlay editor-selection-overlay-next-border " +
+                  nextBorders.join(" ")
+                }
+                style={{
+                  top,
+                  left: `${range[1] * charWidth}px`,
+                  width: `${charWidth}px`
+                }}
+              >
+                <div />
+              </div>
+            )}
+          </div>
         );
       })}
     </div>

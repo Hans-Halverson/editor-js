@@ -1,7 +1,14 @@
+:root {
+  --line-height: 21px;
+  --selection-overlay-radius: 3px;
+
+  --editor-background-color: #ffffff;
+}
+
 .editor-root {
   align-items: stretch;
   border: 1px solid #d2d3d4;
-  background-color: #ffffff;
+  background-color: var(--editor-background-color);
   display: flex;
   flex-direction: row;
   height: 450px;
@@ -11,7 +18,7 @@
 .editor-text {
   font-family: Consolas, "Liberation Mono", Courier, monospace;
   font-size: 14px;
-  line-height: 21px;
+  line-height: var(--line-height);
 }
 
 .editor-line-numbers {
@@ -47,7 +54,7 @@
 
 .editor-line {
   color: rgb(0, 0, 0);
-  height: 21px;
+  height: var(--line-height);
   margin: 0;
 }
 
@@ -66,7 +73,7 @@
 .editor-cursor {
   animation: cursor-blink 0.5s steps(2, start) 0.25s infinite alternate;
   background-color: rgb(0, 0, 0);
-  height: 21px;
+  height: var(--line-height);
   position: absolute;
   width: 2px;
 }
@@ -96,6 +103,45 @@
 
 .editor-selection-overlay {
   background-color: rgba(0, 0, 0, 0.15);
-  height: 21px;
+  height: var(--line-height);
   position: absolute;
+}
+
+.editor-selection-overlay.top-right {
+  border-top-right-radius: var(--selection-overlay-radius);
+}
+
+.editor-selection-overlay.top-left {
+  border-top-left-radius: var(--selection-overlay-radius);
+}
+
+.editor-selection-overlay.bottom-right {
+  border-bottom-right-radius: var(--selection-overlay-radius);
+}
+
+.editor-selection-overlay.bottom-left {
+  border-bottom-left-radius: var(--selection-overlay-radius);
+}
+
+.editor-selection-overlay-prev-border > div,
+.editor-selection-overlay-next-border > div {
+  background-color: var(--editor-background-color);
+  height: 100%;
+  width: 100%;
+}
+
+.editor-selection-overlay-prev-border.top > div {
+  border-top-right-radius: var(--selection-overlay-radius);
+}
+
+.editor-selection-overlay-prev-border.bottom > div {
+  border-bottom-right-radius: var(--selection-overlay-radius);
+}
+
+.editor-selection-overlay-next-border.top > div {
+  border-top-left-radius: var(--selection-overlay-radius);
+}
+
+.editor-selection-overlay-next-border.bottom > div {
+  border-bottom-left-radius: var(--selection-overlay-radius);
 }
