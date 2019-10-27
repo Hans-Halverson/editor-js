@@ -15,14 +15,24 @@ int foo(int n, int num) {
 }`;
 
 type State = {
-  lines: Array<string>;
+  lines: string[];
   selection: Selection | null;
 };
 
-let initialState: State = {
+const initialState: State = {
   lines: INITIAL_TEXT.split("\n"),
   selection: null
 };
+
+let currentEditorStore: EditorStore;
+
+export function getEditorStore(): EditorStore {
+  return currentEditorStore;
+}
+
+export function setEditorStore(store: EditorStore) {
+  currentEditorStore = store;
+}
 
 export type EditorStore = Store<State>;
 

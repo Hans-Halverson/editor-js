@@ -104,10 +104,9 @@ const EditorSelectionOverlay = (props: {}) => {
         const top = `${i * LINE_HEIGHT}px`;
 
         return (
-          <div>
+          <div key={i}>
             {prevBorders.length > 0 && (
               <div
-                key={`${i}-prev`}
                 className={
                   "editor-selection-overlay editor-selection-overlay-prev-border " +
                   prevBorders.join(" ")
@@ -122,7 +121,6 @@ const EditorSelectionOverlay = (props: {}) => {
               </div>
             )}
             <div
-              key={i}
               className={"editor-selection-overlay " + borders.join(" ")}
               style={{
                 top,
@@ -132,7 +130,6 @@ const EditorSelectionOverlay = (props: {}) => {
             />
             {nextBorders.length > 0 && (
               <div
-                key={`${i}-next`}
                 className={
                   "editor-selection-overlay editor-selection-overlay-next-border " +
                   nextBorders.join(" ")

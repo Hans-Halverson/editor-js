@@ -5,6 +5,7 @@ import { Location } from "../model/Selection";
 import ScrollWorkspace from "../utils/ScrollWorkspace";
 import Selection from "../model/Selection";
 import TextWidth from "./TextWidth";
+import _ from "lodash";
 
 export function mapClientPositionToLocation(x: number, y: number): Location {
   const contents = document.getElementById(EDITOR_CONTENTS_ID)!;
@@ -40,7 +41,7 @@ export function clampLocationToText(
     };
   }
 
-  const offset = Math.max(Math.min(location.offset, lines[line].length), 0);
+  const offset = _.clamp(location.offset, 0, lines[line].length);
 
   return { line, offset };
 }
@@ -64,7 +65,14 @@ export function decrementLocation(
 }
 
 export function setSelection(store: EditorStore, selection: Selection) {
-  ScrollWorkspace.scrollIntoPaddedView(selection.focus.offset);
+  const oldSelection = store.get("selection");
+  if (
+    oldSelection === null ||
+    oldSelection.focus.offset !== selection.focus.offset
+  ) {
+    ScrollWorkspace.scrollIntoPaddedView(selection.focus.offset);
+  }
+
   store.set("selection")(selection);
 }
 

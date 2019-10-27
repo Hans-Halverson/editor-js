@@ -34,27 +34,10 @@ const EditorCursorOverlay = (props: {}) => {
     EditorDrag.startDragging();
   };
 
-  const onMouseMove = (event: React.MouseEvent) => {
-    if (!EditorDrag.isDragging()) {
-      return;
-    }
-
-    const location = mapClientPositionToLocation(event.clientX, event.clientY);
-    const clampedLocation = clampLocationToText(location, store);
-
-    const selection = store.get("selection");
-    if (selection == null) {
-      return;
-    }
-
-    setSelection(store, selection.withFocus(clampedLocation));
-  };
-
   return (
     <div
       className="editor-workspace-overlay editor-cursor-overlay"
       onMouseDown={onMouseDown}
-      onMouseMove={onMouseMove}
     >
       {selection != null && (
         <div
@@ -62,7 +45,7 @@ const EditorCursorOverlay = (props: {}) => {
           className="editor-cursor"
           style={{
             top: selection.focus.line * LINE_HEIGHT,
-            left: selection.focus.offset * charWidth - 1
+            left: Math.round(selection.focus.offset * charWidth - 1)
           }}
         />
       )}

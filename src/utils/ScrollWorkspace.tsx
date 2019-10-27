@@ -1,42 +1,49 @@
 import { EDITOR_CONTENTS_ID, EDITOR_WORKSPACE_ID } from "../editor/Editor";
+import {
+  clampLocationToText,
+  mapClientPositionToLocation,
+  setSelection
+} from "./SelectionUtils";
 
 import EditorDrag from "./EditorDrag";
 import TextWidth from "./TextWidth";
+import _ from "lodash";
+import { getEditorStore } from "../model/EditorStore";
 
 const LEFT_SCROLL_PADDING = 3.5;
 const RIGHT_SCROLL_PADDING = 2;
 
 class ScrollWorkspace {
   static init() {
-    document.body.addEventListener("mousemove", (event: MouseEvent) => {
+    window.addEventListener("mousemove", (event: MouseEvent) => {
       if (!EditorDrag.isDragging()) {
+        return;
+      }
+
+      const store = getEditorStore();
+      const selection = store.get("selection");
+      if (selection === null) {
         return;
       }
 
       const workspace = document.getElementById(EDITOR_WORKSPACE_ID)!;
       const workspaceBounds = workspace.getBoundingClientRect();
+      let location = mapClientPositionToLocation(event.clientX, event.clientY);
 
-      if (
-        event.clientX >= workspaceBounds.left &&
-        event.clientX <= workspaceBounds.right
-      ) {
-        return;
+      if (event.clientX < workspaceBounds.left) {
+        location = { line: location.line, offset: 0 };
+      } else if (event.clientX > workspaceBounds.right) {
+        const lines = store.get("lines");
+        const clampedLine = _.clamp(location.line, 0, lines.length - 1);
+        location = {
+          line: clampedLine,
+          offset: lines[clampedLine].length
+        };
       }
 
-      const contents = document.getElementById(EDITOR_CONTENTS_ID)!;
-      const contentsBounds = contents.getBoundingClientRect();
-
-      const charWidth = TextWidth.getCharWidth();
-
-      ScrollWorkspace.scrollIntoPaddedView(
-        (event.clientX - contentsBounds.left) / charWidth
-      );
+      const focus = clampLocationToText(location, store);
+      setSelection(store, selection.withFocus(focus));
     });
-  }
-
-  static scrollX(x: number) {
-    const workspace = document.getElementById(EDITOR_WORKSPACE_ID)!;
-    workspace.scrollLeft = x;
   }
 
   static scrollIntoPaddedView(offset: number) {
@@ -52,11 +59,10 @@ class ScrollWorkspace {
     const rightPaddedX = contentsBounds.left + rightPaddedOffset;
 
     if (leftPaddedX < workspaceBounds.left) {
-      ScrollWorkspace.scrollX(leftPaddedOffset);
+      workspace.scrollLeft = leftPaddedOffset;
     } else if (rightPaddedX > workspaceBounds.right) {
-      ScrollWorkspace.scrollX(
-        rightPaddedOffset - (workspaceBounds.right - workspaceBounds.left)
-      );
+      workspace.scrollLeft =
+        rightPaddedOffset - (workspaceBounds.right - workspaceBounds.left);
     }
   }
 }

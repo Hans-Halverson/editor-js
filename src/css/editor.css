@@ -39,6 +39,7 @@
 #editor-workspace {
   flex: 1 1 auto;
   overflow-x: scroll;
+  padding-left: 1px;
 }
 
 #editor-contents {

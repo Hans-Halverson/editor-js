@@ -9,14 +9,12 @@ class EditorDrag {
     EditorDrag._isDragging = true;
   }
 
+  static stopDragging() {
+    EditorDrag._isDragging = false;
+  }
+
   static init() {
-    document.body.addEventListener(
-      "mouseup",
-      () => {
-        EditorDrag._isDragging = false;
-      },
-      true
-    );
+    window.addEventListener("mouseup", EditorDrag.stopDragging, true);
   }
 }
 

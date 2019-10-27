@@ -1,6 +1,4 @@
-- Handle enter
-- Handle tab
 - Copy/cut/paste
 - Undo/redo stack
-- Selections persist when cursor is outside editor
-- Editor horizontal scroll snaps to side when cursor leaves editor
+- Up/down keys preserve original offset
+- Allow multiple editors per page
