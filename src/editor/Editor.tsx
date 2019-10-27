@@ -9,22 +9,27 @@ import EditorLineNumbers from "./EditorLineNumbers";
 import EditorLines from "./EditorLines";
 import EditorSelectionOverlay from "./EditorSelectionOverlay";
 import EditorStore from "../model/EditorStore";
+import ScrollWorkspace from "../utils/ScrollWorkspace";
 import TextWidth from "../utils/TextWidth";
 
+export const EDITOR_CONTENTS_ID = "editor-contents";
 export const EDITOR_WORKSPACE_ID = "editor-workspace";
 
 const Editor = (props: {}) => {
   TextWidth.init();
   EditorDrag.init();
+  ScrollWorkspace.init();
 
   return (
     <EditorStore.Container>
       <div className="editor-root">
         <EditorLineNumbers />
         <div id={EDITOR_WORKSPACE_ID}>
-          <EditorLines />
-          <EditorSelectionOverlay />
-          <EditorCursorOverlay />
+          <div id={EDITOR_CONTENTS_ID}>
+            <EditorLines />
+            <EditorSelectionOverlay />
+            <EditorCursorOverlay />
+          </div>
           <EditorInput />
         </div>
       </div>

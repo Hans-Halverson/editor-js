@@ -1,15 +1,17 @@
-import { EDITOR_WORKSPACE_ID } from "../editor/Editor";
+import { EDITOR_CONTENTS_ID } from "../editor/Editor";
 import { EditorStore } from "../model/EditorStore";
 import { LINE_HEIGHT } from "../utils/LayoutConstants";
 import { Location } from "../model/Selection";
+import ScrollWorkspace from "../utils/ScrollWorkspace";
+import Selection from "../model/Selection";
 import TextWidth from "./TextWidth";
 
 export function mapClientPositionToLocation(x: number, y: number): Location {
-  const workspace = document.getElementById(EDITOR_WORKSPACE_ID)!;
-  const workspaceBounds = workspace.getBoundingClientRect();
+  const contents = document.getElementById(EDITOR_CONTENTS_ID)!;
+  const contentsBounds = contents.getBoundingClientRect();
 
-  const offsetX = x - workspaceBounds.left;
-  const offsetY = y - workspaceBounds.top;
+  const offsetX = x - contentsBounds.left;
+  const offsetY = y - contentsBounds.top;
 
   const charWidth = TextWidth.getCharWidth();
 
@@ -41,6 +43,11 @@ export function clampLocationToText(
   const offset = Math.max(Math.min(location.offset, lines[line].length), 0);
 
   return { line, offset };
+}
+
+export function setSelection(store: EditorStore, selection: Selection) {
+  ScrollWorkspace.scrollIntoPaddedView(selection.focus.offset);
+  store.set("selection")(selection);
 }
 
 export default {};

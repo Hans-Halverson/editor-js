@@ -4,7 +4,8 @@ import * as React from "react";
 
 import {
   clampLocationToText,
-  mapClientPositionToLocation
+  mapClientPositionToLocation,
+  setSelection
 } from "../utils/SelectionUtils";
 
 import EditorDrag from "../utils/EditorDrag";
@@ -28,7 +29,7 @@ const EditorCursorOverlay = (props: {}) => {
     const location = mapClientPositionToLocation(event.clientX, event.clientY);
     const clampedLocation = clampLocationToText(location, store);
 
-    store.set("selection")(Selection.point(clampedLocation));
+    setSelection(store, Selection.point(clampedLocation));
 
     EditorDrag.startDragging();
   };
@@ -39,7 +40,6 @@ const EditorCursorOverlay = (props: {}) => {
     }
 
     const location = mapClientPositionToLocation(event.clientX, event.clientY);
-    console.log(location);
     const clampedLocation = clampLocationToText(location, store);
 
     const selection = store.get("selection");
@@ -47,7 +47,7 @@ const EditorCursorOverlay = (props: {}) => {
       return;
     }
 
-    store.set("selection")(selection.withFocus(clampedLocation));
+    setSelection(store, selection.withFocus(clampedLocation));
   };
 
   return (
