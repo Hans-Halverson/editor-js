@@ -20,6 +20,13 @@ class Selection {
     return new Selection(this.anchor, focus);
   }
 
+  isCollapsed(): boolean {
+    return (
+      this.anchor.line === this.focus.line &&
+      this.anchor.offset === this.focus.offset
+    );
+  }
+
   isBackwards(): boolean {
     if (this.focus.line < this.anchor.line) {
       return true;

@@ -5,9 +5,9 @@ import * as React from "react";
 import EditorStore from "../model/EditorStore";
 
 const EditorLineNumbers = (props: {}) => {
-  let store = EditorStore.useStore();
-  let lineCount = store.get("lines").length;
-  let lines = Array.from({ length: lineCount }, (_, i) => i + 1);
+  const store = EditorStore.useStore();
+  const lineCount = store.get("lines").length;
+  const lines = Array.from({ length: lineCount }, (_, idx) => idx + 1);
 
   return (
     <div className="editor-line-numbers">

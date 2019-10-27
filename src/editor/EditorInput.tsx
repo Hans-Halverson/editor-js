@@ -2,11 +2,13 @@ import "../css/editor.css";
 
 import * as React from "react";
 
+import { decrementLocation, setSelection } from "../utils/SelectionUtils";
+
 import EditorStore from "../model/EditorStore";
 import Selection from "../model/Selection";
-import { setSelection } from "../utils/SelectionUtils";
 
 export const EDITOR_INPUT_ID = "editor-input";
+const TAB_WIDTH = 4;
 
 export function focusEditorInput() {
   const input = document.getElementById(EDITOR_INPUT_ID)!;
@@ -49,19 +51,9 @@ const EditorInput = (props: {}) => {
         );
         return;
       case "ArrowLeft":
-        if (offset === 0) {
-          if (line === 0) {
-            return;
-          }
+        const newLocation = decrementLocation(selection.focus, store);
 
-          setSelection(
-            store,
-            Selection.point({ line: line - 1, offset: lines[line - 1].length })
-          );
-          return;
-        }
-
-        setSelection(store, Selection.point({ line, offset: offset - 1 }));
+        setSelection(store, Selection.point(newLocation));
         return;
       case "ArrowRight":
         if (offset === lines[line].length) {
@@ -89,13 +81,91 @@ const EditorInput = (props: {}) => {
           })
         );
         return;
-      default:
-        const oldLine = lines[line];
-        const preText = oldLine.substring(0, offset);
-        const postText = oldLine.substring(offset);
-
-        const newLine = preText + event.key + postText;
+      case "Backspace": {
         const newLines = lines.slice();
+
+        if (selection.isCollapsed()) {
+          if (offset === 0) {
+            if (line === 0) {
+              return;
+            }
+
+            newLines.splice(line - 1, 2, lines[line - 1] + lines[line]);
+          } else {
+            const oldLine = lines[line];
+            const newLine =
+              oldLine.substring(0, offset - 1) + oldLine.substring(offset);
+
+            newLines.splice(line, 1, newLine);
+          }
+
+          store.set("lines")(newLines);
+
+          const newLocation = decrementLocation(selection.focus, store);
+          setSelection(store, Selection.point(newLocation));
+        } else {
+          const firstSelection = selection.getFirst();
+          const secondSelection = selection.getSecond();
+
+          const oldFirstLine = lines[firstSelection.line];
+          const oldSecondLine = lines[secondSelection.line];
+          const newLine =
+            oldFirstLine.substring(0, firstSelection.offset) +
+            oldSecondLine.substring(secondSelection.offset);
+
+          newLines.splice(
+            line,
+            secondSelection.line - firstSelection.line + 1,
+            newLine
+          );
+
+          store.set("lines")(newLines);
+          setSelection(store, Selection.point(firstSelection));
+        }
+
+        return;
+      }
+      case "Enter": {
+        const newLines = lines.slice();
+        const oldLine = lines[line];
+
+        newLines.splice(
+          line,
+          1,
+          oldLine.substring(0, offset),
+          oldLine.substring(offset)
+        );
+
+        store.set("lines")(newLines);
+        setSelection(store, Selection.point({ line: line + 1, offset: 0 }));
+        return;
+      }
+      case "Tab": {
+        const newLines = lines.slice();
+        const oldLine = lines[line];
+        const newLine =
+          oldLine.substring(0, offset) +
+          " ".repeat(TAB_WIDTH) +
+          oldLine.substring(offset);
+
+        newLines.splice(line, 1, newLine);
+
+        store.set("lines")(newLines);
+        setSelection(
+          store,
+          Selection.point({ line, offset: offset + TAB_WIDTH })
+        );
+
+        event.preventDefault();
+
+        return;
+      }
+      default:
+        const newLines = lines.slice();
+        const oldLine = lines[line];
+        const newLine =
+          oldLine.substring(0, offset) + event.key + oldLine.substring(offset);
+
         newLines.splice(line, 1, newLine);
 
         store.set("lines")(newLines);

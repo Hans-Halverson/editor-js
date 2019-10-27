@@ -45,6 +45,24 @@ export function clampLocationToText(
   return { line, offset };
 }
 
+export function decrementLocation(
+  location: Location,
+  store: EditorStore
+): Location {
+  const { line, offset } = location;
+  const lines = store.get("lines");
+
+  if (offset === 0) {
+    if (line === 0) {
+      return location;
+    }
+
+    return { line: line - 1, offset: lines[line - 1].length };
+  }
+
+  return { line, offset: offset - 1 };
+}
+
 export function setSelection(store: EditorStore, selection: Selection) {
   ScrollWorkspace.scrollIntoPaddedView(selection.focus.offset);
   store.set("selection")(selection);

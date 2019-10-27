@@ -87,7 +87,7 @@ const EditorSelectionOverlay = (props: {}) => {
           if (nextRange[0] > range[0]) {
             borders.push("bottom-left");
           } else if (nextRange[0] < range[0]) {
-            if (nextRange[1] > range[1]) {
+            if (nextRange[1] > range[0]) {
               prevBorders.push("bottom");
             } else {
               borders.push("bottom-left");
@@ -100,8 +100,6 @@ const EditorSelectionOverlay = (props: {}) => {
             nextBorders.push("bottom");
           }
         }
-
-        console.log(i, nextBorders);
 
         const top = `${i * LINE_HEIGHT}px`;
 
