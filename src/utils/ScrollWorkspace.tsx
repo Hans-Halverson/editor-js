@@ -6,6 +6,7 @@ import {
 } from "./SelectionUtils";
 
 import EditorDrag from "./EditorDrag";
+import { Location } from "../model/Selection";
 import TextWidth from "./TextWidth";
 import _ from "lodash";
 import { getEditorStore } from "../model/EditorStore";
@@ -31,14 +32,14 @@ class ScrollWorkspace {
       let location = mapClientPositionToLocation(event.clientX, event.clientY);
 
       if (event.clientX < workspaceBounds.left) {
-        location = { line: location.line, offset: 0 };
+        location = location.withOffset(0);
       } else if (event.clientX > workspaceBounds.right) {
         const lines = store.get("lines");
         const clampedLine = _.clamp(location.line, 0, lines.length - 1);
-        location = {
+        location = new Location({
           line: clampedLine,
           offset: lines[clampedLine].length
-        };
+        });
       }
 
       const focus = clampLocationToText(location, store);

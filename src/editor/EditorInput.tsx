@@ -2,10 +2,10 @@ import "../css/editor.css";
 
 import * as React from "react";
 
+import Selection, { Location } from "../model/Selection";
 import { decrementLocation, setSelection } from "../utils/SelectionUtils";
 
 import EditorStore from "../model/EditorStore";
-import Selection from "../model/Selection";
 
 export const EDITOR_INPUT_ID = "editor-input";
 const TAB_WIDTH = 4;
@@ -27,7 +27,8 @@ const EditorInput = (props: {}) => {
       return;
     }
 
-    const { line, offset } = selection.focus;
+    const focus = selection.focus;
+    const { line, offset } = focus;
 
     switch (event.key) {
       case "ArrowDown":
@@ -37,21 +38,18 @@ const EditorInput = (props: {}) => {
             Selection.point({
               line: lines.length - 1,
               offset: lines[lines.length - 1].length
-            })
+            }),
+            { useShadowOffset: true, bypassShadowOffset: true }
           );
           return;
         }
 
-        setSelection(
-          store,
-          Selection.point({
-            line: line + 1,
-            offset: Math.min(offset, lines[line + 1].length)
-          })
-        );
+        setSelection(store, Selection.point(focus.down()), {
+          useShadowOffset: true
+        });
         return;
       case "ArrowLeft":
-        const newLocation = decrementLocation(selection.focus, store);
+        const newLocation = decrementLocation(focus, store);
 
         setSelection(store, Selection.point(newLocation));
         return;
@@ -65,21 +63,20 @@ const EditorInput = (props: {}) => {
           return;
         }
 
-        setSelection(store, Selection.point({ line, offset: offset + 1 }));
+        setSelection(store, Selection.point(focus.right()));
         return;
       case "ArrowUp":
         if (line === 0) {
-          setSelection(store, Selection.point({ line: 0, offset: 0 }));
+          setSelection(store, Selection.point(Location.start()), {
+            useShadowOffset: true,
+            bypassShadowOffset: true
+          });
           return;
         }
 
-        setSelection(
-          store,
-          Selection.point({
-            line: line - 1,
-            offset: Math.min(offset, lines[line - 1].length)
-          })
-        );
+        setSelection(store, Selection.point(focus.up()), {
+          useShadowOffset: true
+        });
         return;
       case "Backspace": {
         const newLines = lines.slice();
@@ -101,7 +98,7 @@ const EditorInput = (props: {}) => {
 
           store.set("lines")(newLines);
 
-          const newLocation = decrementLocation(selection.focus, store);
+          const newLocation = decrementLocation(focus, store);
           setSelection(store, Selection.point(newLocation));
         } else {
           const firstSelection = selection.getFirst();
@@ -151,10 +148,7 @@ const EditorInput = (props: {}) => {
         newLines.splice(line, 1, newLine);
 
         store.set("lines")(newLines);
-        setSelection(
-          store,
-          Selection.point({ line, offset: offset + TAB_WIDTH })
-        );
+        setSelection(store, Selection.point(focus.right(TAB_WIDTH)));
 
         event.preventDefault();
 
@@ -169,7 +163,7 @@ const EditorInput = (props: {}) => {
         newLines.splice(line, 1, newLine);
 
         store.set("lines")(newLines);
-        setSelection(store, Selection.point({ line, offset: offset + 1 }));
+        setSelection(store, Selection.point(focus.right()));
         return;
     }
   };

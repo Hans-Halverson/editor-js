@@ -17,11 +17,13 @@ int foo(int n, int num) {
 type State = {
   lines: string[];
   selection: Selection | null;
+  shadowOffset: number | null;
 };
 
 const initialState: State = {
   lines: INITIAL_TEXT.split("\n"),
-  selection: null
+  selection: null,
+  shadowOffset: null
 };
 
 let currentEditorStore: EditorStore;
