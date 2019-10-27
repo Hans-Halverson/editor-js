@@ -1,5 +1,6 @@
 .editor-root {
   align-items: stretch;
+  border: 1px solid #d2d3d4;
   background-color: #ffffff;
   display: flex;
   flex-direction: row;
@@ -27,7 +28,7 @@
   width: 23px;
 }
 
-.editor-workspace {
+#editor-workspace {
   flex: 1 1 auto;
   position: relative;
 }
@@ -66,4 +67,17 @@
   100% {
     visibility: hidden;
   }
+}
+
+.editor-input {
+  background: none;
+  border: none;
+  height: 0;
+  left: 0;
+  outline: none;
+  overflow: hidden;
+  position: absolute;
+  resize: none;
+  top: 0;
+  width: 0;
 }

@@ -2,13 +2,11 @@ import "../css/editor.css";
 
 import * as React from "react";
 
-import EditorStore from "./EditorStore";
+import EditorStore from "../model/EditorStore";
 
 const EditorLineNumbers = (props: {}) => {
   let store = EditorStore.useStore();
-  let text = store.get("text");
-
-  let lineCount = text.split("").filter(c => c === "\n").length + 1;
+  let lineCount = store.get("lines").length;
   let lines = Array.from({ length: lineCount }, (_, i) => i + 1);
 
   return (

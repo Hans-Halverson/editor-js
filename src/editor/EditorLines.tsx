@@ -2,13 +2,11 @@ import "../css/editor.css";
 
 import * as React from "react";
 
-import EditorStore from "./EditorStore";
+import EditorStore from "../model/EditorStore";
 
 const EditorLines = (props: {}) => {
   let store = EditorStore.useStore();
-  let text = store.get("text");
-
-  let lines = text.split("\n");
+  let lines = store.get("lines");
 
   return (
     <div className="editor-lines">

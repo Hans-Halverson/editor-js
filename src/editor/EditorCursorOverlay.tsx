@@ -2,10 +2,15 @@ import "../css/editor.css";
 
 import * as React from "react";
 
-import EditorStore from "./EditorStore";
-import TextWidth from "../utils/TextWidth";
+import {
+  clampLocationToText,
+  mapClientPositionToLocation
+} from "../utils/SelectionUtils";
 
-const LINE_HEIGHT = 21;
+import EditorStore from "../model/EditorStore";
+import { LINE_HEIGHT } from "../utils/LayoutConstants";
+import TextWidth from "../utils/TextWidth";
+import { focusEditorInput } from "./EditorInput";
 
 const EditorCursorOverlay = (props: {}) => {
   const store = EditorStore.useStore();
@@ -13,36 +18,21 @@ const EditorCursorOverlay = (props: {}) => {
 
   const charWidth = TextWidth.getCharWidth();
 
-  const overlayRef = React.useRef<HTMLDivElement>(null);
-
   const onMouseDown = (event: React.MouseEvent) => {
-    const overlay = overlayRef.current;
-    if (overlay == null) {
-      return;
-    }
+    event.preventDefault();
+    event.stopPropagation();
+    focusEditorInput();
 
-    const overlayBounds = overlay.getBoundingClientRect();
-
-    const offsetX = event.clientX - overlayBounds.left;
-    const offsetY = event.clientY - overlayBounds.top;
-
-    const line = Math.floor(offsetY / LINE_HEIGHT);
-    const offset = Math.floor((offsetX + charWidth / 2) / charWidth);
+    const location = mapClientPositionToLocation(event.clientX, event.clientY);
+    const clampedLocation = clampLocationToText(location, store);
 
     store.set("selection")({
-      anchor: { line, offset }
+      anchor: clampedLocation
     });
   };
 
-  const onMouseUp = (e: React.MouseEvent) => {};
-
   return (
-    <div
-      ref={overlayRef}
-      className="editor-cursor-overlay"
-      onMouseDown={onMouseDown}
-      onMouseUp={onMouseUp}
-    >
+    <div className="editor-cursor-overlay" onMouseDown={onMouseDown}>
       {selection != null && (
         <div
           key={`line-${selection.anchor.line}-offset-${selection.anchor.offset}`}
