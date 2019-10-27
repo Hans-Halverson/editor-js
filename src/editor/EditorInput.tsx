@@ -3,6 +3,7 @@ import "../css/editor.css";
 import * as React from "react";
 
 import EditorStore from "../model/EditorStore";
+import Selection from "../model/Selection";
 
 export const EDITOR_INPUT_ID = "editor-input";
 
@@ -28,21 +29,21 @@ const EditorInput = (props: {}) => {
     switch (event.key) {
       case "ArrowDown":
         if (line === lines.length - 1) {
-          store.set("selection")({
-            anchor: {
+          store.set("selection")(
+            Selection.point({
               line: lines.length - 1,
               offset: lines[lines.length - 1].length
-            }
-          });
+            })
+          );
           return;
         }
 
-        store.set("selection")({
-          anchor: {
+        store.set("selection")(
+          Selection.point({
             line: line + 1,
             offset: Math.min(offset, lines[line + 1].length)
-          }
-        });
+          })
+        );
         return;
       case "ArrowLeft":
         if (offset === 0) {
@@ -50,13 +51,13 @@ const EditorInput = (props: {}) => {
             return;
           }
 
-          store.set("selection")({
-            anchor: { line: line - 1, offset: lines[line - 1].length }
-          });
+          store.set("selection")(
+            Selection.point({ line: line - 1, offset: lines[line - 1].length })
+          );
           return;
         }
 
-        store.set("selection")({ anchor: { line, offset: offset - 1 } });
+        store.set("selection")(Selection.point({ line, offset: offset - 1 }));
         return;
       case "ArrowRight":
         if (offset === lines[line].length) {
@@ -64,24 +65,26 @@ const EditorInput = (props: {}) => {
             return;
           }
 
-          store.set("selection")({ anchor: { line: line + 1, offset: 0 } });
+          store.set("selection")(
+            Selection.point({ line: line + 1, offset: 0 })
+          );
           return;
         }
 
-        store.set("selection")({ anchor: { line, offset: offset + 1 } });
+        store.set("selection")(Selection.point({ line, offset: offset + 1 }));
         return;
       case "ArrowUp":
         if (line === 0) {
-          store.set("selection")({ anchor: { line: 0, offset: 0 } });
+          store.set("selection")(Selection.point({ line: 0, offset: 0 }));
           return;
         }
 
-        store.set("selection")({
-          anchor: {
+        store.set("selection")(
+          Selection.point({
             line: line - 1,
             offset: Math.min(offset, lines[line - 1].length)
-          }
-        });
+          })
+        );
         return;
       default:
         const oldLine = lines[line];
@@ -93,7 +96,7 @@ const EditorInput = (props: {}) => {
         newLines.splice(line, 1, newLine);
 
         store.set("lines")(newLines);
-        store.set("selection")({ anchor: { line, offset: offset + 1 } });
+        store.set("selection")(Selection.point({ line, offset: offset + 1 }));
         return;
     }
   };

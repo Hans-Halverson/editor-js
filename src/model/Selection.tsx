@@ -3,8 +3,42 @@ export type Location = {
   offset: number;
 };
 
-type Selection = {
+class Selection {
   anchor: Location;
-};
+  focus: Location;
+
+  constructor(anchor: Location, focus: Location) {
+    this.anchor = anchor;
+    this.focus = focus;
+  }
+
+  static point(location: Location): Selection {
+    return new Selection(location, location);
+  }
+
+  withFocus(focus: Location): Selection {
+    return new Selection(this.anchor, focus);
+  }
+
+  isBackwards(): boolean {
+    if (this.focus.line < this.anchor.line) {
+      return true;
+    }
+
+    if (this.anchor.line < this.focus.line) {
+      return false;
+    }
+
+    return this.focus.offset < this.anchor.offset;
+  }
+
+  getFirst(): Location {
+    return this.isBackwards() ? this.focus : this.anchor;
+  }
+
+  getSecond(): Location {
+    return this.isBackwards() ? this.anchor : this.focus;
+  }
+}
 
 export default Selection;

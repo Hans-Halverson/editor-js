@@ -43,13 +43,16 @@
   margin: 0;
 }
 
-.editor-cursor-overlay {
-  cursor: text;
+.editor-workspace-overlay {
   height: 100%;
   left: 0;
   position: absolute;
   top: 0;
   width: 100%;
+}
+
+.editor-cursor-overlay {
+  cursor: text;
 }
 
 .editor-cursor {
@@ -80,4 +83,10 @@
   resize: none;
   top: 0;
   width: 0;
+}
+
+.editor-selection-overlay {
+  background-color: rgba(0, 0, 0, 0.15);
+  height: 21px;
+  position: absolute;
 }

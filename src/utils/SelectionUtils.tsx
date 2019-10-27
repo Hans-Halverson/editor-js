@@ -31,9 +31,14 @@ export function clampLocationToText(
       line: lines.length - 1,
       offset: lines[lines.length - 1].length
     };
+  } else if (line < 0) {
+    return {
+      line: 0,
+      offset: 0
+    };
   }
 
-  const offset = Math.min(location.offset, lines[line].length);
+  const offset = Math.max(Math.min(location.offset, lines[line].length), 0);
 
   return { line, offset };
 }
